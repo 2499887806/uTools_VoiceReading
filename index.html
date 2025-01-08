@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>语音朗读</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="top-controls">
+            <div class="voice-control">
+                <select id="voice-select">
+                    <option value="">加载中...</option>
+                </select>
+            </div>
+            <div class="speed-control">
+                <label>语速：</label>
+                <input type="range" id="speed-control" min="0" max="7" value="3" step="1">
+                <span id="speed-value">正常</span>
+            </div>
+            <div class="status">
+                <span>状态：</span>
+                <span id="reading-status">未开始</span>
+            </div>
+        </div>
+        <div class="content-area">
+            <div class="text-wrapper">
+                <div id="text-layer" class="text-layer" contenteditable="true" spellcheck="false"></div>
+            </div>
+        </div>
+        <div class="button-group">
+            <button id="play-btn">开始朗读</button>
+            <button id="pause-btn">暂停</button>
+            <button id="stop-btn">停止</button>
+        </div>
+    </div>
+    <script src="src/index.js"></script>
+</body>
+
+</html>

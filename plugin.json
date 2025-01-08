@@ -1,0 +1,25 @@
+{
+  "pluginName": "VoiceReading",
+  "description": "可将文本转换为自然流畅的语音朗读",
+  "version": "1.1.0",
+  "author": "VoiceReading",
+  "homepage": "",
+  "main": "index.html",
+  "logo": "src-utools/logo.png",
+  "preload": "preload.js",
+  "features": [
+    {
+      "code": "voice-reading",
+      "explain": "文本朗读",
+      "cmds": [
+        "语音朗读",
+        {
+          "type": "over",
+          "label": "语音朗读",
+          "minLength": 1,
+          "maxLength": 100000
+        }
+      ]
+    }
+  ]
+} 
