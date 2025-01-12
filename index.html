@@ -5,12 +5,21 @@
     <meta charset="UTF-8">
     <title>语音朗读</title>
     <link rel="stylesheet" href="src/styles.css">
+    <link rel="stylesheet" href="src/v2.css">
 </head>
 
-<body>
-    <div class="container">
+<body data-version="v1">
+    <!-- 添加版本导航 -->
+    <div class="version-nav">
+        <button id="v1-btn" class="active">V1</button>
+        <button id="v2-btn">V2</button>
+    </div>
+
+    <!-- V1版本容器 -->
+    <div class="container v1-container">
         <div class="top-controls">
             <div class="voice-control">
+                <label>语言：</label>
                 <select id="voice-select">
                     <option value="">加载中...</option>
                 </select>
@@ -36,7 +45,44 @@
             <button id="stop-btn">停止</button>
         </div>
     </div>
-    <script src="src/index.js"></script>
+
+    <!-- V2版本容器(完全复制V1的结构) -->
+    <div class="container v2-container">
+        <div class="top-controls">
+            <div class="voice-control">
+                <label>语言：</label>
+                <select id="voice-select-v2">
+                    <option value="">加载中...</option>
+                </select>
+            </div>
+            <div class="volume-control">
+                <label>音量：</label>
+                <input type="range" id="volume-control-v2" min="0" max="100" value="50" step="1">
+                <span id="volume-value-v2">50%</span>
+            </div>
+            <div class="speed-control">
+                <label>语速：</label>
+                <input type="range" id="speed-control-v2" min="-100" max="200" value="0" step="10">
+                <span id="speed-value-v2">0%</span>
+            </div>
+            <div class="status">
+                <span>状态：</span>
+                <span id="reading-status-v2">未开始</span>
+            </div>
+        </div>
+        <div class="content-area">
+            <div class="text-wrapper">
+
+                <div id="text-layer-v2" class="text-layer" contenteditable="true" spellcheck="false" placeholder="请输入要朗读的文本..."></div>
+            </div>
+        </div>
+        <div class="button-group">
+            <button id="play-btn-v2">开始朗读</button>
+            <button id="pause-btn-v2">暂停</button>
+            <button id="stop-btn-v2">停止</button>
+        </div>
+    </div>
+    <script src="src/index.js" type="module"></script>
 </body>
 
 </html>

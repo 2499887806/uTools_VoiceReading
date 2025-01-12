@@ -1,13 +1,80 @@
 const { ipcRenderer } = require('electron');
+const { EdgeTTS } = require('node-edge-tts');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+
+// 将 EdgeTTS 注入到 window 对象中
+window.EdgeTTS = { EdgeTTS };
 
 let currentUtterance = null;
+let edgeVoices = null;
+let currentEdgeStream = null;
+let audioContext = null;
+let audioSource = null;
+
+// 创建音频上下文
+function createAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContext;
+}
+
+
+// 播放音频数据
+async function playAudioData(audioData, onEnd) {
+    try {
+        const context = createAudioContext();
+        if (context.state === 'suspended') {
+            await context.resume();
+        }
+
+        // 将音频数据转换为 AudioBuffer
+        const arrayBuffer = audioData.buffer.slice(
+            audioData.byteOffset,
+            audioData.byteOffset + audioData.byteLength
+        );
+        const audioBuffer = await context.decodeAudioData(arrayBuffer);
+
+        // 创建音频源并播放
+        const source = context.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(context.destination);
+        source.start(0);
+
+        // 保存当前音频源以便停止播放
+        audioSource = source;
+
+        // 监听播放结束
+        source.onended = () => {
+            audioSource = null;
+            console.log('播放完成');
+            if (onEnd) {
+                onEnd();
+            }
+        };
+
+        return source;
+    } catch (error) {
+        console.error('播放音频失败:', error);
+        if (onEnd) {
+            onEnd();
+        }
+        return null;
+    }
+}
+
+// 监听主进程发送的音频数据
+ipcRenderer.on('play-audio', (event, audioData) => {
+    playAudioData(Buffer.from(audioData));
+});
 
 window.exports = {
     "voice-reading": {
         mode: "none",
         args: {
             enter: (action) => {
-                // 处理从uTools进入插件
                 window.utools.hideMainWindow();
                 const selectedText = action.payload;
                 console.log('选中的文本:', selectedText);
@@ -35,10 +102,9 @@ window.utools.onPluginEnter(({ code, type, payload }) => {
 
 // 注入到window对象中，供renderer使用
 window.speechAPI = {
-    // 获取可用的语音列表
+    // 获取可用的语音列表 (Web Speech API)
     getVoices: async () => {
         try {
-            // 等待语音列表加载完成
             await new Promise((resolve) => {
                 if (speechSynthesis.getVoices().length) {
                     resolve();
@@ -56,30 +122,83 @@ window.speechAPI = {
         }
     },
 
-    // 开始朗读
+    // 获取 Edge TTS 语音列表
+    getEdgeVoices: async () => {
+        try {
+            if (edgeVoices) {
+                return edgeVoices;
+            }
+
+            // 从文件读取语音列表
+            const pluginPath = window.utools.getPath('userData');
+            const voicesFile = path.join(__dirname, 'src-utools/classified_voices.txt');
+            console.log('语音列表文件路径:', voicesFile);
+
+            const content = await fs.promises.readFile(voicesFile, 'utf8');
+            const lines = content.split('\n');
+
+            edgeVoices = [];
+            let currentLocale = '';
+            let currentRegion = '';
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (!trimmedLine) continue;
+
+                // 处理语言子分类（以 ## 开头）
+                if (trimmedLine.startsWith('## ')) {
+                    currentLocale = trimmedLine.substring(3);
+                    continue;
+                }
+
+                // 处理语音条目（以 - 开头）
+                if (trimmedLine.startsWith('- ')) {
+                    const match = /\(([\w-]+),\s*(\w+)\)\s*\((\w+)\)\s*\[(.*?)\]/.exec(trimmedLine);
+                    if (match) {
+                        const [_, locale, name, gender, region] = match;
+                        const shortName = `${locale}-${name}`;
+                        const localName = name.replace('Neural', '');
+
+                        edgeVoices.push({
+                            ShortName: shortName,
+                            LocalName: localName,
+                            Locale: locale,
+                            Gender: gender,
+                            Region: region,
+                            Category: currentLocale
+                        });
+                    }
+                }
+            }
+
+            console.log('Edge TTS 语音列表:', edgeVoices);
+            return edgeVoices;
+        } catch (error) {
+            console.error('获取 Edge TTS 语音列表失败:', error);
+            console.error('错误详情:', error.stack);
+            return [];
+        }
+    },
+
+    // 使用 Web Speech API 朗读
     speak: async (text, voiceName, rate, onBoundary, onEnd) => {
         try {
             console.log('开始朗读:', { text, voiceName, rate });
             if (currentUtterance) {
-                this.stop();
+                window.speechAPI.stop();
             }
 
-            // 创建语音合成实例
             currentUtterance = new SpeechSynthesisUtterance(text);
 
-            // 设置语音
             const voices = speechSynthesis.getVoices();
             const voice = voices.find(v => v.name === voiceName);
             if (voice) {
                 currentUtterance.voice = voice;
             }
 
-            // 设置语速 (0-7 映射到 0.1-10.0)
-            const mappedRate = 0.1 + (rate * 1.414);
-            currentUtterance.rate = mappedRate;
-            console.log('映射后的语速:', mappedRate);
+            currentUtterance.rate = rate;
+            console.log('设置语速:', rate);
 
-            // 设置事件监听
             currentUtterance.onend = () => {
                 console.log('朗读完成');
                 currentUtterance = null;
@@ -96,7 +215,6 @@ window.speechAPI = {
                 }
             };
 
-            // 添加边界事件监听，用于跟踪朗读位置
             currentUtterance.onboundary = (event) => {
                 if (event.name === 'word' || event.name === 'sentence') {
                     const position = event.charIndex;
@@ -108,7 +226,6 @@ window.speechAPI = {
                 }
             };
 
-            // 开始朗读
             speechSynthesis.speak(currentUtterance);
             return true;
         } catch (error) {
@@ -123,72 +240,168 @@ window.speechAPI = {
     // 暂停朗读
     pause: () => {
         console.log('暂停朗读');
-        speechSynthesis.pause();
+        return new Promise(async (resolve) => {
+            try {
+                if (audioContext && audioSource) {
+                    await audioContext.suspend();
+                    console.log('音频已暂停');
+                } else {
+                    speechSynthesis.pause();
+                }
+                resolve();
+            } catch (error) {
+                console.error('暂停朗读失败:', error);
+                resolve();
+            }
+        });
     },
 
     // 继续朗读
     resume: () => {
         console.log('继续朗读');
-        speechSynthesis.resume();
+        return new Promise(async (resolve) => {
+            try {
+                if (audioContext && audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                    console.log('音频已恢复');
+                } else {
+                    speechSynthesis.resume();
+                }
+                resolve();
+            } catch (error) {
+                console.error('继续朗读失败:', error);
+                resolve();
+            }
+        });
     },
 
     // 停止朗读
     stop: () => {
         console.log('停止朗读');
-        speechSynthesis.cancel();
-        currentUtterance = null;
+        return new Promise(async (resolve) => {
+            try {
+                // 停止 Web Speech API
+                speechSynthesis.cancel();
+                currentUtterance = null;
+
+                // 停止 Edge TTS
+                if (audioSource) {
+                    try {
+                        audioSource.stop(0);
+                    } catch (e) {
+                        console.error('停止音频源失败:', e);
+                    }
+                    audioSource.disconnect();
+                    audioSource = null;
+                }
+
+                if (currentEdgeStream) {
+                    try {
+                        currentEdgeStream.destroy();
+                    } catch (e) {
+                        console.error('销毁流失败:', e);
+                    }
+                    currentEdgeStream = null;
+                }
+
+                if (audioContext) {
+                    try {
+                        // 先暂停
+                        await audioContext.suspend();
+                        // 再关闭
+                        await audioContext.close();
+                        audioContext = null;
+                    } catch (e) {
+                        console.error('关闭音频上下文失败:', e);
+                    }
+                }
+
+                // 确保所有资源都被清理
+                setTimeout(() => {
+                    try {
+                        // 再次检查并清理
+                        if (audioSource) {
+                            audioSource.disconnect();
+                            audioSource = null;
+                        }
+                        if (audioContext && audioContext.state !== 'closed') {
+                            audioContext.close();
+                            audioContext = null;
+                        }
+                        resolve();
+                    } catch (e) {
+                        console.error('清理资源失败:', e);
+                        resolve();
+                    }
+                }, 100);
+            } catch (error) {
+                console.error('停止朗读时发生错误:', error);
+                resolve();
+            }
+        });
     },
 
     // 添加高亮方法
     highlight: (position, length) => {
-        const text = document.getElementById('text-layer').textContent;
+        const version = document.body.dataset.version;
+        const textLayerId = version === 'v2' ? 'text-layer-v2' : 'text-layer';
+        const textLayer = document.getElementById(textLayerId);
+
+        // 首先移除所有现有的选择
+        window.getSelection().removeAllRanges();
+
+        // 如果位置或长度无效，直接返回
+        if (position < 0 || length <= 0) return;
+
+        // 创建新的范围
         const range = document.createRange();
-        const textLayer = document.getElementById('text-layer');
+        const nodeIterator = document.createNodeIterator(
+            textLayer,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+        );
 
-        // 获取正确的文本节点和位置
         let currentPos = 0;
-        let targetNode = null;
-        let nodeOffset = 0;
+        let startNode = null;
+        let startOffset = 0;
+        let endNode = null;
+        let endOffset = 0;
+        let node;
 
-        function findPosition(node) {
-            if (node.nodeType === Node.TEXT_NODE) {
-                if (currentPos + node.length >= position) {
-                    targetNode = node;
-                    nodeOffset = position - currentPos;
-                    return true;
-                }
-                currentPos += node.length;
-            } else {
-                for (let child of node.childNodes) {
-                    if (findPosition(child)) {
-                        return true;
-                    }
-                }
+        // 遍历所有文本节点
+        while ((node = nodeIterator.nextNode())) {
+            const nodeLength = node.length;
+
+            // 找到起始节点
+            if (!startNode && currentPos + nodeLength > position) {
+                startNode = node;
+                startOffset = position - currentPos;
             }
-            return false;
+
+            // 找到结束节点
+            if (!endNode && currentPos + nodeLength >= position + length) {
+                endNode = node;
+                endOffset = position + length - currentPos;
+                break;
+            }
+
+            currentPos += nodeLength;
         }
 
-        findPosition(textLayer);
-
-        if (targetNode) {
+        // 如果找到了有效的起始和结束节点
+        if (startNode && endNode) {
             try {
-                range.setStart(targetNode, nodeOffset);
-                range.setEnd(targetNode, nodeOffset + length);
-
-                // 清除之前的选区
-                window.getSelection().removeAllRanges();
-                // 设置新的选区
+                range.setStart(startNode, startOffset);
+                range.setEnd(endNode, endOffset);
                 window.getSelection().addRange(range);
 
-                // 确保高亮区域在视图中
+                // 处理滚动
                 const rect = range.getBoundingClientRect();
                 const containerRect = textLayer.getBoundingClientRect();
-
-                // 计算当前高亮区域相对于容器的位置
                 const relativeTop = rect.top - containerRect.top;
                 const relativeBottom = rect.bottom - containerRect.top;
 
-                // 如果高亮区域不在可视范围内，进行滚动
                 if (relativeTop < 0 || relativeBottom > containerRect.height) {
                     const targetScrollTop = textLayer.scrollTop + relativeTop - (containerRect.height * 0.3);
                     textLayer.scrollTo({
@@ -200,5 +413,142 @@ window.speechAPI = {
                 console.error('设置高亮范围失败:', error);
             }
         }
+    },
+
+    // 检查文件是否存在
+    fileExists: (filePath) => {
+        return new Promise((resolve) => {
+            try {
+                const exists = fs.existsSync(filePath);
+                console.log('检查文件是否存在:', { filePath, exists });
+                resolve(exists);
+            } catch (error) {
+                console.error('检查文件是否存在失败:', error);
+                resolve(false);
+            }
+        });
+    },
+
+    // 删除文件
+    deleteFile: (filePath) => {
+        return new Promise((resolve, reject) => {
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    if (err.code === 'ENOENT') {
+                        resolve();
+                    } else {
+                        console.error('删除文件失败:', err);
+                        reject(err);
+                    }
+                } else {
+                    resolve();
+                }
+            });
+        });
+    },
+
+    // 获取临时文件路径
+    getTempFilePath: (filename) => {
+        return path.join(os.tmpdir(), filename);
+    },
+
+    // 读取文件内容
+    readFile: (filePath) => {
+        return new Promise((resolve, reject) => {
+            fs.readFile(filePath, 'utf8', (err, data) => {
+                if (err) {
+                    console.error('读取文件失败:', err);
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+    },
+
+    // 播放音频文件
+    playAudioFile: async (filename, onTimeUpdate, onEnd, startTime = 0) => {
+        try {
+            const filePath = path.join(os.tmpdir(), filename);
+            console.log('开始播放音频文件:', {
+                filename,
+                filePath,
+                startTime: `${startTime}秒`
+            });
+
+            const audioData = await fs.promises.readFile(filePath);
+            console.log('音频文件读取成功，大小:', audioData.length, '字节');
+
+            const context = createAudioContext();
+            if (context.state === 'suspended') {
+                await context.resume();
+            }
+
+            const arrayBuffer = audioData.buffer.slice(
+                audioData.byteOffset,
+                audioData.byteOffset + audioData.byteLength
+            );
+            const audioBuffer = await context.decodeAudioData(arrayBuffer);
+            console.log('音频解码成功，时长:', audioBuffer.duration, '秒');
+
+            const source = context.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(context.destination);
+
+            // 创建 AudioContext 时间更新处理器
+            if (onTimeUpdate) {
+                const interval = setInterval(() => {
+                    if (context.state === 'running') {
+                        const currentTime = ((context.currentTime - source.startTime) * 1000) + (startTime * 1000);
+                        onTimeUpdate(currentTime);
+                    }
+                }, 10);
+
+                source.onended = () => {
+                    clearInterval(interval);
+                    console.log('音频播放完成');
+                    if (onEnd) onEnd();
+                };
+            } else if (onEnd) {
+                source.onended = onEnd;
+            }
+
+            source.startTime = context.currentTime;
+            // 使用 startTime 参数来控制开始位置
+            source.start(0, startTime);
+            console.log('音频开始播放，起始位置:', startTime, '秒');
+            audioSource = source;
+
+            return true;
+        } catch (error) {
+            console.error('播放音频文件失败:', error);
+            if (onEnd) onEnd();
+            return false;
+        }
+    },
+
+    // 生成文本的哈希值
+    generateHash: (text) => {
+        const crypto = require('crypto');
+        return crypto.createHash('md5').update(text).digest('hex');
+    },
+
+    // 获取临时目录
+    getTempDir: () => {
+        return os.tmpdir();
+    },
+
+    // 读取目录内容
+    readDir: (dirPath) => {
+        return new Promise((resolve, reject) => {
+            fs.readdir(dirPath, (err, files) => {
+                if (err) {
+                    console.error('读取目录失败:', err);
+                    reject(err);
+                } else {
+                    resolve(files);
+                }
+            });
+        });
     }
 }; 

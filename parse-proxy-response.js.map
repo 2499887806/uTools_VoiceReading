@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "file": "parse-proxy-response.js",
+  "sourceRoot": "",
+  "sources": ["src/parse-proxy-response.js"],
+  "names": [],
+  "mappings": ""
+} 

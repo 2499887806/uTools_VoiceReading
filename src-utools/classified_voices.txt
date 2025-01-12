@@ -1,0 +1,482 @@
+## 中文
+- (zh-CN, XiaoxiaoNeural) (Female) [中国大陆]
+- (zh-CN, XiaoyiNeural) (Female) [中国大陆]
+- (zh-CN, YunjianNeural) (Male) [中国大陆]
+- (zh-CN, YunxiNeural) (Male) [中国大陆]
+- (zh-CN, YunxiaNeural) (Male) [中国大陆]
+- (zh-CN, YunyangNeural) (Male) [中国大陆]
+- (zh-TW, HsiaoChenNeural) (Female) [台湾]
+- (zh-TW, YunJheNeural) (Male) [台湾]
+- (zh-TW, HsiaoYuNeural) (Female) [台湾]
+- (zh-HK, HiuGaaiNeural) (Female) [香港]
+- (zh-HK, HiuMaanNeural) (Female) [香港]
+- (zh-HK, WanLungNeural) (Male) [香港]
+- (zh-CN-liaoning, XiaobeiNeural) (Female) [辽宁]
+- (zh-CN-shaanxi, XiaoniNeural) (Female) [陕西]
+
+## 英语
+- (en-AU, NatashaNeural) (Female) [澳大利亚]
+- (en-AU, WilliamNeural) (Male) [澳大利亚]
+- (en-CA, ClaraNeural) (Female) [加拿大]
+- (en-CA, LiamNeural) (Male) [加拿大]
+- (en-HK, SamNeural) (Male) [香港]
+- (en-HK, YanNeural) (Female) [香港]
+- (en-IN, NeerjaExpressiveNeural) (Female) [印度]
+- (en-IN, NeerjaNeural) (Female) [印度]
+- (en-IN, PrabhatNeural) (Male) [印度]
+- (en-IE, ConnorNeural) (Male) [爱尔兰]
+- (en-IE, EmilyNeural) (Female) [爱尔兰]
+- (en-KE, AsiliaNeural) (Female) [肯尼亚]
+- (en-KE, ChilembaNeural) (Male) [肯尼亚]
+- (en-NZ, MitchellNeural) (Male) [新西兰]
+- (en-NZ, MollyNeural) (Female) [新西兰]
+- (en-NG, AbeoNeural) (Male) [尼日利亚]
+- (en-NG, EzinneNeural) (Female) [尼日利亚]
+- (en-PH, JamesNeural) (Male) [菲律宾]
+- (en-PH, RosaNeural) (Female) [菲律宾]
+- (en-SG, LunaNeural) (Female) [新加坡]
+- (en-SG, WayneNeural) (Male) [新加坡]
+- (en-US, AvaMultilingualNeural) (Female) [美国]
+- (en-US, AndrewMultilingualNeural) (Male) [美国]
+- (en-US, EmmaMultilingualNeural) (Female) [美国]
+- (en-US, BrianMultilingualNeural) (Male) [美国]
+- (en-US, AvaNeural) (Female) [美国]
+- (en-US, AndrewNeural) (Male) [美国]
+- (en-US, EmmaNeural) (Female) [美国]
+- (en-US, BrianNeural) (Male) [美国]
+- (en-ZA, LeahNeural) (Female) [南非]
+- (en-ZA, LukeNeural) (Male) [南非]
+- (en-TZ, ElimuNeural) (Male) [坦桑尼亚]
+- (en-TZ, ImaniNeural) (Female) [坦桑尼亚]
+- (en-GB, LibbyNeural) (Female) [英国]
+- (en-GB, MaisieNeural) (Female) [英国]
+- (en-GB, RyanNeural) (Male) [英国]
+- (en-GB, SoniaNeural) (Female) [英国]
+- (en-GB, ThomasNeural) (Male) [英国]
+- (en-US, AnaNeural) (Female) [美国]
+- (en-US, AriaNeural) (Female) [美国]
+- (en-US, ChristopherNeural) (Male) [美国]
+- (en-US, EricNeural) (Male) [美国]
+- (en-US, GuyNeural) (Male) [美国]
+- (en-US, JennyNeural) (Female) [美国]
+- (en-US, MichelleNeural) (Female) [美国]
+- (en-US, RogerNeural) (Male) [美国]
+- (en-US, SteffanNeural) (Male) [美国]
+
+## 日语
+- (ja-JP, KeitaNeural) (Male) [日本]
+- (ja-JP, NanamiNeural) (Female) [日本]
+
+## 韩语
+- (ko-KR, HyunsuMultilingualNeural) (Male) [韩国]
+- (ko-KR, InJoonNeural) (Male) [韩国]
+- (ko-KR, SunHiNeural) (Female) [韩国]
+
+## 法语
+- (fr-BE, CharlineNeural) (Female) [比利时]
+- (fr-BE, GerardNeural) (Male) [比利时]
+- (fr-CA, ThierryNeural) (Male) [加拿大]
+- (fr-CA, AntoineNeural) (Male) [加拿大]
+- (fr-CA, JeanNeural) (Male) [加拿大]
+- (fr-CA, SylvieNeural) (Female) [加拿大]
+- (fr-FR, VivienneMultilingualNeural) (Female) [法国]
+- (fr-FR, RemyMultilingualNeural) (Male) [法国]
+- (fr-FR, DeniseNeural) (Female) [法国]
+- (fr-FR, EloiseNeural) (Female) [法国]
+- (fr-FR, HenriNeural) (Male) [法国]
+- (fr-CH, ArianeNeural) (Female) [瑞士]
+- (fr-CH, FabriceNeural) (Male) [瑞士]
+
+## 德语
+- (de-AT, IngridNeural) (Female) [奥地利]
+- (de-AT, JonasNeural) (Male) [奥地利]
+- (de-DE, SeraphinaMultilingualNeural) (Female) [德国]
+- (de-DE, FlorianMultilingualNeural) (Male) [德国]
+- (de-DE, AmalaNeural) (Female) [德国]
+- (de-DE, ConradNeural) (Male) [德国]
+- (de-DE, KatjaNeural) (Female) [德国]
+- (de-DE, KillianNeural) (Male) [德国]
+- (de-CH, JanNeural) (Male) [瑞士]
+- (de-CH, LeniNeural) (Female) [瑞士]
+
+## 西班牙语
+- (es-AR, ElenaNeural) (Female) [阿根廷]
+- (es-AR, TomasNeural) (Male) [阿根廷]
+- (es-BO, MarceloNeural) (Male) [玻利维亚]
+- (es-BO, SofiaNeural) (Female) [玻利维亚]
+- (es-CL, CatalinaNeural) (Female) [智利]
+- (es-CL, LorenzoNeural) (Male) [智利]
+- (es-CO, GonzaloNeural) (Male) [哥伦比亚]
+- (es-CO, SalomeNeural) (Female) [哥伦比亚]
+- (es-ES, XimenaNeural) (Female) [西班牙]
+- (es-CR, JuanNeural) (Male) [哥斯达黎加]
+- (es-CR, MariaNeural) (Female) [哥斯达黎加]
+- (es-CU, BelkysNeural) (Female) [古巴]
+- (es-CU, ManuelNeural) (Male) [古巴]
+- (es-DO, EmilioNeural) (Male) [多米尼加共和国]
+- (es-DO, RamonaNeural) (Female) [多米尼加共和国]
+- (es-EC, AndreaNeural) (Female) [厄瓜多尔]
+- (es-EC, LuisNeural) (Male) [厄瓜多尔]
+- (es-SV, LorenaNeural) (Female) [萨尔瓦多]
+- (es-SV, RodrigoNeural) (Male) [萨尔瓦多]
+- (es-GQ, JavierNeural) (Male) [GQ]
+- (es-GQ, TeresaNeural) (Female) [GQ]
+- (es-GT, AndresNeural) (Male) [危地马拉]
+- (es-GT, MartaNeural) (Female) [危地马拉]
+- (es-HN, CarlosNeural) (Male) [洪都拉斯]
+- (es-HN, KarlaNeural) (Female) [洪都拉斯]
+- (es-MX, DaliaNeural) (Female) [墨西哥]
+- (es-MX, JorgeNeural) (Male) [墨西哥]
+- (es-NI, FedericoNeural) (Male) [尼加拉瓜]
+- (es-NI, YolandaNeural) (Female) [尼加拉瓜]
+- (es-PA, MargaritaNeural) (Female) [巴拿马]
+- (es-PA, RobertoNeural) (Male) [巴拿马]
+- (es-PY, MarioNeural) (Male) [巴拉圭]
+- (es-PY, TaniaNeural) (Female) [巴拉圭]
+- (es-PE, AlexNeural) (Male) [秘鲁]
+- (es-PE, CamilaNeural) (Female) [秘鲁]
+- (es-PR, KarinaNeural) (Female) [波多黎各]
+- (es-PR, VictorNeural) (Male) [波多黎各]
+- (es-ES, AlvaroNeural) (Male) [西班牙]
+- (es-ES, ElviraNeural) (Female) [西班牙]
+- (es-US, AlonsoNeural) (Male) [美国]
+- (es-US, PalomaNeural) (Female) [美国]
+- (es-UY, MateoNeural) (Male) [乌拉圭]
+- (es-UY, ValentinaNeural) (Female) [乌拉圭]
+- (es-VE, PaolaNeural) (Female) [委内瑞拉]
+- (es-VE, SebastianNeural) (Male) [委内瑞拉]
+
+## 俄语
+- (ru-RU, DmitryNeural) (Male) [俄罗斯]
+- (ru-RU, SvetlanaNeural) (Female) [俄罗斯]
+
+# 亚洲语言
+
+## 孟加拉语
+- (bn-BD, NabanitaNeural) (Female) [孟加拉国]
+- (bn-BD, PradeepNeural) (Male) [孟加拉国]
+- (bn-IN, BashkarNeural) (Male) [印度]
+- (bn-IN, TanishaaNeural) (Female) [印度]
+
+## 古吉拉特语
+- (gu-IN, DhwaniNeural) (Female) [印度]
+- (gu-IN, NiranjanNeural) (Male) [印度]
+
+## 印地语
+- (hi-IN, MadhurNeural) (Male) [印度]
+- (hi-IN, SwaraNeural) (Female) [印度]
+
+## 印度尼西亚语
+- (id-ID, ArdiNeural) (Male) [印度尼西亚]
+- (id-ID, GadisNeural) (Female) [印度尼西亚]
+
+## 柬埔寨语
+- (km-KH, PisethNeural) (Male) [柬埔寨]
+- (km-KH, SreymomNeural) (Female) [柬埔寨]
+
+## 老挝语
+- (lo-LA, ChanthavongNeural) (Male) [老挝]
+- (lo-LA, KeomanyNeural) (Female) [老挝]
+
+## 马拉雅拉姆语
+- (ml-IN, MidhunNeural) (Male) [印度]
+- (ml-IN, SobhanaNeural) (Female) [印度]
+
+## 马拉地语
+- (mr-IN, AarohiNeural) (Female) [印度]
+- (mr-IN, ManoharNeural) (Male) [印度]
+
+## 马来语
+- (ms-MY, OsmanNeural) (Male) [马来西亚]
+- (ms-MY, YasminNeural) (Female) [马来西亚]
+
+## 缅甸语
+- (my-MM, NilarNeural) (Female) [缅甸]
+- (my-MM, ThihaNeural) (Male) [缅甸]
+
+## 尼泊尔语
+- (ne-NP, HemkalaNeural) (Female) [尼泊尔]
+- (ne-NP, SagarNeural) (Male) [尼泊尔]
+
+## 僧伽罗语
+- (si-LK, SameeraNeural) (Male) [斯里兰卡]
+- (si-LK, ThiliniNeural) (Female) [斯里兰卡]
+
+## 泰米尔语
+- (ta-IN, PallaviNeural) (Female) [印度]
+- (ta-IN, ValluvarNeural) (Male) [印度]
+- (ta-MY, KaniNeural) (Female) [马来西亚]
+- (ta-MY, SuryaNeural) (Male) [马来西亚]
+- (ta-SG, AnbuNeural) (Male) [新加坡]
+- (ta-SG, VenbaNeural) (Female) [新加坡]
+- (ta-LK, KumarNeural) (Male) [斯里兰卡]
+- (ta-LK, SaranyaNeural) (Female) [斯里兰卡]
+
+## 泰卢固语
+- (te-IN, MohanNeural) (Male) [印度]
+- (te-IN, ShrutiNeural) (Female) [印度]
+
+## 泰语
+- (th-TH, NiwatNeural) (Male) [泰国]
+- (th-TH, PremwadeeNeural) (Female) [泰国]
+
+## 乌尔都语
+- (ur-IN, GulNeural) (Female) [印度]
+- (ur-IN, SalmanNeural) (Male) [印度]
+- (ur-PK, AsadNeural) (Male) [巴基斯坦]
+- (ur-PK, UzmaNeural) (Female) [巴基斯坦]
+
+## 越南语
+- (vi-VN, HoaiMyNeural) (Female) [越南]
+- (vi-VN, NamMinhNeural) (Male) [越南]
+
+# 欧洲语言
+
+## 保加利亚语
+- (bg-BG, BorislavNeural) (Male) [保加利亚]
+- (bg-BG, KalinaNeural) (Female) [保加利亚]
+
+## 捷克语
+- (cs-CZ, AntoninNeural) (Male) [捷克]
+- (cs-CZ, VlastaNeural) (Female) [捷克]
+
+## 丹麦语
+- (da-DK, ChristelNeural) (Female) [丹麦]
+- (da-DK, JeppeNeural) (Male) [丹麦]
+
+## 希腊语
+- (el-GR, AthinaNeural) (Female) [希腊]
+- (el-GR, NestorasNeural) (Male) [希腊]
+
+## 爱沙尼亚语
+- (et-EE, AnuNeural) (Female) [爱沙尼亚]
+- (et-EE, KertNeural) (Male) [爱沙尼亚]
+
+## 芬兰语
+- (fi-FI, HarriNeural) (Male) [芬兰]
+- (fi-FI, NooraNeural) (Female) [芬兰]
+
+## 爱尔兰语
+- (ga-IE, ColmNeural) (Male) [爱尔兰]
+- (ga-IE, OrlaNeural) (Female) [爱尔兰]
+
+## 匈牙利语
+- (hu-HU, NoemiNeural) (Female) [匈牙利]
+- (hu-HU, TamasNeural) (Male) [匈牙利]
+
+## 冰岛语
+- (is-IS, GudrunNeural) (Female) [冰岛]
+- (is-IS, GunnarNeural) (Male) [冰岛]
+
+## 意大利语
+- (it-IT, GiuseppeMultilingualNeural) (Male) [意大利]
+- (it-IT, DiegoNeural) (Male) [意大利]
+- (it-IT, ElsaNeural) (Female) [意大利]
+- (it-IT, IsabellaNeural) (Female) [意大利]
+
+## 立陶宛语
+- (lt-LT, LeonasNeural) (Male) [立陶宛]
+- (lt-LT, OnaNeural) (Female) [立陶宛]
+
+## 拉脱维亚语
+- (lv-LV, EveritaNeural) (Female) [拉脱维亚]
+- (lv-LV, NilsNeural) (Male) [拉脱维亚]
+
+## 荷兰语
+- (nl-BE, ArnaudNeural) (Male) [比利时]
+- (nl-BE, DenaNeural) (Female) [比利时]
+- (nl-NL, ColetteNeural) (Female) [NL]
+- (nl-NL, FennaNeural) (Female) [NL]
+- (nl-NL, MaartenNeural) (Male) [NL]
+
+## 波兰语
+- (pl-PL, MarekNeural) (Male) [波兰]
+- (pl-PL, ZofiaNeural) (Female) [波兰]
+
+## 葡萄牙语
+- (pt-BR, ThalitaMultilingualNeural) (Female) [巴西]
+- (pt-BR, AntonioNeural) (Male) [巴西]
+- (pt-BR, FranciscaNeural) (Female) [巴西]
+- (pt-PT, DuarteNeural) (Male) [葡萄牙]
+- (pt-PT, RaquelNeural) (Female) [葡萄牙]
+
+## 罗马尼亚语
+- (ro-RO, AlinaNeural) (Female) [罗马尼亚]
+- (ro-RO, EmilNeural) (Male) [罗马尼亚]
+
+## 斯洛伐克语
+- (sk-SK, LukasNeural) (Male) [斯洛伐克]
+- (sk-SK, ViktoriaNeural) (Female) [斯洛伐克]
+
+## 斯洛文尼亚语
+- (sl-SI, PetraNeural) (Female) [斯洛文尼亚]
+- (sl-SI, RokNeural) (Male) [斯洛文尼亚]
+
+## 瑞典语
+- (sv-SE, MattiasNeural) (Male) [瑞典]
+- (sv-SE, SofieNeural) (Female) [瑞典]
+
+## 乌克兰语
+- (uk-UA, OstapNeural) (Male) [乌克兰]
+- (uk-UA, PolinaNeural) (Female) [乌克兰]
+
+# 中东语言
+
+## 阿拉伯语
+- (ar-DZ, AminaNeural) (Female) [阿尔及利亚]
+- (ar-DZ, IsmaelNeural) (Male) [阿尔及利亚]
+- (ar-BH, AliNeural) (Male) [巴林]
+- (ar-BH, LailaNeural) (Female) [巴林]
+- (ar-EG, SalmaNeural) (Female) [埃及]
+- (ar-EG, ShakirNeural) (Male) [埃及]
+- (ar-IQ, BasselNeural) (Male) [伊拉克]
+- (ar-IQ, RanaNeural) (Female) [伊拉克]
+- (ar-JO, SanaNeural) (Female) [约旦]
+- (ar-JO, TaimNeural) (Male) [约旦]
+- (ar-KW, FahedNeural) (Male) [科威特]
+- (ar-KW, NouraNeural) (Female) [科威特]
+- (ar-LB, LaylaNeural) (Female) [黎巴嫩]
+- (ar-LB, RamiNeural) (Male) [黎巴嫩]
+- (ar-LY, ImanNeural) (Female) [LY]
+- (ar-LY, OmarNeural) (Male) [LY]
+- (ar-MA, JamalNeural) (Male) [摩洛哥]
+- (ar-MA, MounaNeural) (Female) [摩洛哥]
+- (ar-OM, AbdullahNeural) (Male) [阿曼]
+- (ar-OM, AyshaNeural) (Female) [阿曼]
+- (ar-QA, AmalNeural) (Female) [卡塔尔]
+- (ar-QA, MoazNeural) (Male) [卡塔尔]
+- (ar-SA, HamedNeural) (Male) [沙特阿拉伯]
+- (ar-SA, ZariyahNeural) (Female) [沙特阿拉伯]
+- (ar-SY, AmanyNeural) (Female) [叙利亚]
+- (ar-SY, LaithNeural) (Male) [叙利亚]
+- (ar-TN, HediNeural) (Male) [突尼斯]
+- (ar-TN, ReemNeural) (Female) [突尼斯]
+- (ar-AE, FatimaNeural) (Female) [阿联酋]
+- (ar-AE, HamdanNeural) (Male) [阿联酋]
+- (ar-YE, MaryamNeural) (Female) [也门]
+- (ar-YE, SalehNeural) (Male) [也门]
+
+## 波斯语
+- (fa-IR, DilaraNeural) (Female) [伊朗]
+- (fa-IR, FaridNeural) (Male) [伊朗]
+
+## 希伯来语
+- (he-IL, AvriNeural) (Male) [以色列]
+- (he-IL, HilaNeural) (Female) [以色列]
+
+## 普什图语
+- (ps-AF, GulNawazNeural) (Male) [阿富汗]
+- (ps-AF, LatifaNeural) (Female) [阿富汗]
+
+## 土耳其语
+- (tr-TR, AhmetNeural) (Male) [土耳其]
+- (tr-TR, EmelNeural) (Female) [土耳其]
+
+# 非洲语言
+
+## 南非荷兰语
+- (af-ZA, AdriNeural) (Female) [南非]
+- (af-ZA, WillemNeural) (Male) [南非]
+
+## 阿姆哈拉语
+- (am-ET, AmehaNeural) (Male) [ET]
+- (am-ET, MekdesNeural) (Female) [ET]
+
+## 索马里语
+- (so-SO, MuuseNeural) (Male) [SO]
+- (so-SO, UbaxNeural) (Female) [SO]
+
+## 斯瓦希里语
+- (sw-KE, RafikiNeural) (Male) [肯尼亚]
+- (sw-KE, ZuriNeural) (Female) [肯尼亚]
+- (sw-TZ, DaudiNeural) (Male) [坦桑尼亚]
+- (sw-TZ, RehemaNeural) (Female) [坦桑尼亚]
+
+## 祖鲁语
+- (zu-ZA, ThandoNeural) (Female) [南非]
+- (zu-ZA, ThembaNeural) (Male) [南非]
+
+# 其他语言
+
+## 阿塞拜疆语
+- (az-AZ, BabekNeural) (Male) [阿塞拜疆]
+- (az-AZ, BanuNeural) (Female) [阿塞拜疆]
+
+## 波斯尼亚语
+- (bs-BA, GoranNeural) (Male) [波斯尼亚和黑塞哥维那]
+- (bs-BA, VesnaNeural) (Female) [波斯尼亚和黑塞哥维那]
+
+## 加泰罗尼亚语
+- (ca-ES, EnricNeural) (Male) [西班牙]
+- (ca-ES, JoanaNeural) (Female) [西班牙]
+
+## 威尔士语
+- (cy-GB, AledNeural) (Male) [英国]
+- (cy-GB, NiaNeural) (Female) [英国]
+
+## 菲律宾语
+- (fil-PH, AngeloNeural) (Male) [菲律宾]
+- (fil-PH, BlessicaNeural) (Female) [菲律宾]
+
+## 加利西亚语
+- (gl-ES, RoiNeural) (Male) [西班牙]
+- (gl-ES, SabelaNeural) (Female) [西班牙]
+
+## 克罗地亚语
+- (hr-HR, GabrijelaNeural) (Female) [克罗地亚]
+- (hr-HR, SreckoNeural) (Male) [克罗地亚]
+
+## iu
+- (iu-Latn-CA, SiqiniqNeural) (Female) [加拿大]
+- (iu-Latn-CA, TaqqiqNeural) (Male) [加拿大]
+- (iu-Cans-CA, SiqiniqNeural) (Female) [加拿大]
+- (iu-Cans-CA, TaqqiqNeural) (Male) [加拿大]
+
+## 爪哇语
+- (jv-ID, DimasNeural) (Male) [印度尼西亚]
+- (jv-ID, SitiNeural) (Female) [印度尼西亚]
+
+## 格鲁吉亚语
+- (ka-GE, EkaNeural) (Female) [格鲁吉亚]
+- (ka-GE, GiorgiNeural) (Male) [格鲁吉亚]
+
+## 哈萨克语
+- (kk-KZ, AigulNeural) (Female) [哈萨克斯坦]
+- (kk-KZ, DauletNeural) (Male) [哈萨克斯坦]
+
+## 卡纳达语
+- (kn-IN, GaganNeural) (Male) [印度]
+- (kn-IN, SapnaNeural) (Female) [印度]
+
+## 马其顿语
+- (mk-MK, AleksandarNeural) (Male) [北马其顿]
+- (mk-MK, MarijaNeural) (Female) [北马其顿]
+
+## 蒙古语
+- (mn-MN, BataaNeural) (Male) [蒙古]
+- (mn-MN, YesuiNeural) (Female) [蒙古]
+
+## 马耳他语
+- (mt-MT, GraceNeural) (Female) [马耳他]
+- (mt-MT, JosephNeural) (Male) [马耳他]
+
+## 书面挪威语
+- (nb-NO, FinnNeural) (Male) [挪威]
+- (nb-NO, PernilleNeural) (Female) [挪威]
+
+## 阿尔巴尼亚语
+- (sq-AL, AnilaNeural) (Female) [阿尔巴尼亚]
+- (sq-AL, IlirNeural) (Male) [阿尔巴尼亚]
+
+## 塞尔维亚语
+- (sr-RS, NicholasNeural) (Male) [塞尔维亚]
+- (sr-RS, SophieNeural) (Female) [塞尔维亚]
+
+## 巽他语
+- (su-ID, JajangNeural) (Male) [印度尼西亚]
+- (su-ID, TutiNeural) (Female) [印度尼西亚]
+
+## 乌兹别克语
+- (uz-UZ, MadinaNeural) (Female) [乌兹别克斯坦]
+- (uz-UZ, SardorNeural) (Male) [乌兹别克斯坦]
+

@@ -1,7 +1,7 @@
 {
   "pluginName": "VoiceReading",
   "description": "可将文本转换为自然流畅的语音朗读",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "author": "VoiceReading",
   "homepage": "",
   "main": "index.html",

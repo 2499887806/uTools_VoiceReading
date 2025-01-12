@@ -14,7 +14,6 @@ body {
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
     background: #f5f5f5;
-    color: #333;
     line-height: 1.6;
     display: flex;
 }
@@ -40,13 +39,21 @@ body {
 
 .voice-control {
     flex: 2;
+    display: flex;
+    align-items: center;
+
+}
+
+.voice-control label {
+    white-space: nowrap;
+    color: #333;
 }
 
 .speed-control {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0px;
     white-space: nowrap;
     min-width: 180px;
 }
@@ -54,7 +61,7 @@ body {
 .status {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0px;
     color: #666;
     font-size: 14px;
     min-width: 120px;
@@ -67,10 +74,36 @@ select {
     border-radius: 4px;
     font-size: 14px;
     outline: none;
+    background-color: white;
 }
 
 select:focus {
     border-color: #666;
+}
+
+/* 语音选择下拉列表样式 */
+select optgroup {
+    font-weight: bold;
+    color: #333;
+    background-color: #f8f9fa;
+    padding: 4px;
+}
+
+select optgroup optgroup {
+    margin-left: 12px;
+    font-weight: normal;
+    background-color: white;
+    color: #666;
+}
+
+select option {
+    padding: 4px 8px;
+    background-color: white;
+    color: #333;
+}
+
+select option:hover {
+    background-color: #f0f0f0;
 }
 
 input[type="range"] {
@@ -114,24 +147,96 @@ input[type="range"]::-webkit-slider-thumb {
     will-change: transform;
     overflow: hidden;
     display: flex;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background: #fff;
+    margin: 0 2px;
 }
 
 .text-layer {
     flex: 1;
     position: relative;
-    padding: 15px;
-    font-size: 15px;
-    line-height: 1.6;
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.8;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-y: auto;
     outline: none;
-    background: white;
+    background: #ffffff;
     -webkit-user-select: text;
     user-select: text;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     height: 100%;
+    color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    transition: all 0.3s ease;
+    tab-size: 4;
+}
+
+/* 确保所有子元素都继承黑色字体 */
+.text-layer * {
+    color: #000000 !important;
+}
+
+.text-layer:hover {
+    border-color: #d0d0d0;
+}
+
+.text-layer:focus {
+    border-color: #666;
+    box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.1);
+}
+
+/* 自定义滚动条样式 */
+.text-layer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.text-layer::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.text-layer::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.text-layer::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+/* 空白状态提示 */
+.text-layer[contenteditable="true"]:empty:before {
+    content: '在此输入或粘贴文本...';
+    color: #999;
+    font-style: italic;
+}
+
+/* 选中文本的样式 */
+.text-layer::selection {
+    background: rgba(102, 102, 102, 0.2);
+    color: inherit;
+}
+
+/* 段落间距 */
+.text-layer p {
+    margin: 0 0 0.5em 0;
+    min-height: 1.8em;
+}
+
+.text-layer p:last-child {
+    margin-bottom: 0;
+}
+
+/* 保持文本格式 */
+.text-layer pre {
+    white-space: pre-wrap;
+    margin: 0;
+    font-family: inherit;
 }
 
 .highlight-layer {
@@ -140,9 +245,9 @@ input[type="range"]::-webkit-slider-thumb {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 15px;
-    font-size: 15px;
-    line-height: 1.6;
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.8;
     white-space: pre-wrap;
     word-wrap: break-word;
     pointer-events: none;
@@ -150,16 +255,20 @@ input[type="range"]::-webkit-slider-thumb {
     overflow: hidden;
     z-index: 1;
     mix-blend-mode: multiply;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 }
 
 .highlight {
-    background-color: rgba(74, 144, 226, 0.2);
+    background-color: #b4d5fe;
     border-radius: 2px;
-    border-bottom: 2px solid rgba(74, 144, 226, 0.6);
-    box-shadow: 0 1px 0 rgba(74, 144, 226, 0.2);
 }
 
+/* 选中文本的样式 */
 ::selection {
+    background: #b4d5fe;
+}
+
+.text-layer::selection {
     background: #b4d5fe;
 }
 
@@ -171,7 +280,7 @@ input[type="range"]::-webkit-slider-thumb {
     display: flex;
     gap: 15px;
     justify-content: center;
-    padding-top: 16px;
+    padding-top: 0px;
     flex-shrink: 0;
 }
 
@@ -202,6 +311,33 @@ button:hover {
     background: #555;
 }
 
+/* 添加版本导航样式 */
+.version-nav {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
+
+.version-nav button {
+    min-width: 60px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.version-nav button.active {
+    background: #666;
+    color: white;
+    border-color: #666;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     .top-controls {
@@ -230,4 +366,63 @@ button:hover {
 
 .text-layer:focus {
     border-color: #666;
+}
+
+/* 版本切换相关样式 */
+.v1-container,
+.v2-container {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+body[data-version="v1"] .v1-container {
+    display: flex;
+    opacity: 1;
+}
+
+body[data-version="v2"] .v2-container {
+    display: flex;
+    opacity: 1;
+}
+
+.volume-control {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0px;
+    white-space: nowrap;
+    min-width: 180px;
+}
+
+.volume-control label {
+    white-space: nowrap;
+    color: #333;
+}
+
+/* 响应式设计中添加音量控制的样式 */
+@media (max-width: 768px) {
+    .top-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .speed-control,
+    .volume-control {
+        min-width: unset;
+    }
+
+    .status {
+        min-width: unset;
+    }
+
+    .button-group {
+        flex-wrap: wrap;
+    }
+
+    button {
+        flex: 1;
+        min-width: 100px;
+    }
 }
