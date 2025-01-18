@@ -66,8 +66,7 @@ export class V1Reader {
                 window.getSelection().removeAllRanges();
                 this.lastHighlightPosition = 0;
             } else if (this.readingEnabled && this.textLayer.textContent.trim()) {
-                // 如果开启朗读且有文本，直接开始朗读
-                await window.speechAPI.stop();  // 确保清理所有资源
+                await window.speechAPI.stop();
                 setTimeout(() => {
                     this.startReadingFromPosition(0);
                 }, 100);
@@ -112,7 +111,6 @@ export class V1Reader {
             ...currentConfig,
             voice: this.voiceSelect.value,
             speed: this.speedControl.value,
-            lastText: this.textLayer.textContent,
             v1: {
                 ...currentConfig.v1,
                 readingEnabled: this.readingEnabled
@@ -132,23 +130,9 @@ export class V1Reader {
                 this.speedControl.value = this.config.speed;
                 this.speedValue.textContent = this.speedLabels[this.config.speed];
             }
-            if (this.config.lastText) {
-                this.textLayer.textContent = this.config.lastText;
-            }
             if (this.config.v1?.readingEnabled !== undefined) {
                 this.readingEnabled = this.config.v1.readingEnabled;
                 this.updateButtonStates();
-
-                // 只在当前版本是V1时才自动开始朗读
-                if (document.body.dataset.version === 'v1' && this.readingEnabled && this.textLayer.textContent.trim()) {
-                    setTimeout(async () => {
-                        // 确保没有其他朗读在进行
-                        if (!this.isReading && !this.isPaused) {
-                            await window.speechAPI.stop();  // 确保清理所有资源
-                            this.startReadingFromPosition(0);
-                        }
-                    }, 1000);
-                }
             }
         }
     }

@@ -13,6 +13,7 @@ export class V2Reader {
         this.stopBtn = document.getElementById('stop-btn-v2');
         this.textLayer = document.getElementById('text-layer-v2');
         this.readingStatus = document.getElementById('reading-status-v2');
+        this.saveMp3Btn = document.getElementById('save-mp3-btn-v2');
 
         this.config = null;
         this.currentVoice = null;
@@ -28,7 +29,8 @@ export class V2Reader {
         this.currentSubtitles = []; // 当前的字幕数据
         this.currentTextHash = null; // 当前文本的哈希值
         this.inUseFiles = new Set(); // 正在使用的文件
-
+        this.isSaving = false; // 是否正在保存MP3
+        this.timeout = 1000 * 60 * 5;
         // 监听应用退出事件
         window.utools.onPluginOut(() => {
             this.cleanup();
@@ -56,7 +58,6 @@ export class V2Reader {
             this.speedValue.textContent = `${value}%`;
             this.updateTTSConfig();
             this.saveConfig();
-            // 语速改变时清除当前哈希值，因为需要重新生成语音
             this.currentTextHash = null;
         });
 
@@ -64,7 +65,6 @@ export class V2Reader {
             this.currentVoice = this.voiceSelect.value;
             this.updateTTSConfig();
             this.saveConfig();
-            // 语音改变时清除当前哈希值，因为需要重新生成语音
             this.currentTextHash = null;
         });
 
@@ -73,14 +73,12 @@ export class V2Reader {
             this.volumeValue.textContent = `${value}%`;
             this.updateTTSConfig();
             this.saveConfig();
-            // 音量改变时清除当前哈希值，因为需要重新生成语音
             this.currentTextHash = null;
         });
 
         this.textLayer.addEventListener('input', () => {
             if (!this.isReading) {
                 this.currentText = this.textLayer.textContent;
-                // 文本改变时更新哈希值
                 this.updateCurrentTextHash();
                 this.saveConfig();
             }
@@ -158,57 +156,111 @@ export class V2Reader {
             }
         });
 
-        // 添加粘贴事件监听
-        this.textLayer.addEventListener('paste', (e) => {
-            e.preventDefault();
+        // 添加保存MP3按钮事件
+        this.saveMp3Btn.addEventListener('click', async () => {
+            if (this.isSaving) return;
 
-            // 获取纯文本和富文本
-            const plainText = e.clipboardData.getData('text/plain');
-            const htmlText = e.clipboardData.getData('text/html');
+            const text = this.textLayer.textContent.trim();
+            if (!text) {
+                this.readingStatus.textContent = '没有可保存的文本';
+                return;
+            }
 
-            if (htmlText) {
-                // 如果有HTML内容，说明是带格式的文本
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = htmlText;
+            try {
+                this.isSaving = true;
+                this.saveMp3Btn.classList.add('loading');
+                this.saveMp3Btn.disabled = true;
 
-                // 遍历所有元素清除背景色和文字颜色
-                const clearStyles = (element) => {
-                    element.style.backgroundColor = 'transparent';
-                    element.style.color = '#000000';
-                    element.style.width = '100%';
-                    element.style.margin = '0';
-                    element.style.padding = '0';
-                    // 移除可能影响文字显示的属性
-                    element.style.textShadow = 'none';
-                    element.style.background = 'none';
-                    element.style.backgroundImage = 'none';
-                    element.style.backgroundClip = 'unset';
-                    element.style.webkitBackgroundClip = 'unset';
-                    element.style.webkitTextFillColor = '#000000';
-                };
+                // 确保TTS配置是最新的
+                this.updateTTSConfig();
 
-                // 处理所有元素
-                clearStyles(tempDiv);
-                tempDiv.querySelectorAll('*').forEach(clearStyles);
+                // 预处理文本
+                const processedText = this.preprocessText(text);
 
-                // 清理内容
-                let content = tempDiv.innerHTML;
-                // 移除开头的空行
-                content = content.replace(/^(\s*<br\s*\/?>\s*|\s*&nbsp;\s*|\s+)*/, '');
-                // 移除结尾的空行
-                content = content.replace(/(\s*<br\s*\/?>\s*|\s*&nbsp;\s*|\s+)*$/, '');
-                // 移除连续的多个空行
-                content = content.replace(/(<br\s*\/?>\s*|\s*&nbsp;\s*){2,}/g, '<br>');
+                // 生成临时文件名
+                const textHash = this.generateTextHash(
+                    processedText,
+                    this.currentVoice,
+                    this.speedControl.value,
+                    this.volumeControl.value
+                );
+                const tempFile = `edge-tts-${textHash}.mp3`;
+                const tempPath = window.speechAPI.getTempFilePath(tempFile);
 
-                // 插入处理后的HTML
-                document.execCommand('insertHTML', false, content);
-            } else {
-                // 如果是纯文本，清理换行
-                const cleanText = plainText
-                    .replace(/^\s+/, '')  // 移除开头的空白
-                    .replace(/\s+$/, '')  // 移除结尾的空白
-                    .replace(/\n{3,}/g, '\n\n');  // 将3个以上连续换行替换为2个
-                document.execCommand('insertText', false, cleanText);
+                // 检查文件是否已存在
+                const fileExists = await window.speechAPI.fileExists(tempPath);
+                if (!fileExists) {
+                    // 生成新的音频文件
+                    await this.tts.ttsPromise(processedText, tempPath);
+                }
+
+                // 生成文件名（使用当前时间）
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hour = String(now.getHours()).padStart(2, '0');
+                const minute = String(now.getMinutes()).padStart(2, '0');
+                const second = String(now.getSeconds()).padStart(2, '0');
+
+                const timestamp = `${year}-${month}-${day}_${hour}-${minute}-${second}`;
+                const defaultPath = `语音朗读_${timestamp}.mp3`;
+                console.log('准备保存文件:', {
+                    tempPath,
+                    defaultPath,
+                    textLength: text.length,
+                    processedTextLength: processedText.length,
+                    voice: this.currentVoice,
+                    speed: this.speedControl.value,
+                    volume: this.volumeControl.value
+                });
+
+                // 打开保存对话框
+                const savePath = await window.utools.showSaveDialog({
+                    title: '保存MP3文件',
+                    defaultPath: defaultPath,
+                    filters: [{ name: 'MP3文件', extensions: ['mp3'] }]
+                });
+
+                if (savePath) {
+                    console.log('用户选择的保存路径:', savePath);
+                    try {
+                        // 复制文件到目标位置
+                        await window.speechAPI.copyFile(tempPath, savePath);
+
+                        // 获取文件大小
+                        const fileSize = window.speechAPI.getFileSize(savePath);
+                        console.log('文件保存成功:', {
+                            源文件: tempPath,
+                            目标文件: savePath,
+                            文件大小: fileSize + ' bytes'
+                        });
+
+                        // 验证文件是否存在
+                        if (await window.speechAPI.fileExists(savePath)) {
+                            this.readingStatus.textContent = '文件保存成功';
+                            setTimeout(() => {
+                                if (!this.isReading) {
+                                    this.readingStatus.textContent = this.readingEnabled ? '已开启朗读' : '已关闭朗读';
+                                }
+                            }, 2000);
+                        } else {
+                            throw new Error('文件保存失败：目标文件不存在');
+                        }
+                    } catch (err) {
+                        console.error('文件复制失败:', err);
+                        throw new Error(`文件保存失败: ${err.message}`);
+                    }
+                } else {
+                    console.log('用户取消了保存操作');
+                }
+            } catch (error) {
+                console.error('保存MP3失败:', error);
+                this.readingStatus.textContent = '保存失败: ' + error.message;
+            } finally {
+                this.isSaving = false;
+                this.saveMp3Btn.classList.remove('loading');
+                this.saveMp3Btn.disabled = false;
             }
         });
     }
@@ -222,7 +274,6 @@ export class V2Reader {
                 voice: this.voiceSelect.value,
                 speed: this.speedControl.value,
                 volume: this.volumeControl.value,
-                lastText: this.textLayer.textContent,
                 readingEnabled: this.readingEnabled,
                 pitch: '0%'
             }
@@ -235,7 +286,7 @@ export class V2Reader {
         this.config = window.utools.dbStorage.getItem('voice-config');
         console.log('加载V2配置:', this.config);
         if (this.config?.v2) {
-            const { voice, speed, volume, lastText, readingEnabled } = this.config.v2;
+            const { voice, speed, volume, readingEnabled } = this.config.v2;
 
             if (voice) {
                 this.voiceSelect.value = voice;
@@ -250,10 +301,6 @@ export class V2Reader {
             } else {
                 this.speedControl.value = 0;
                 this.speedValue.textContent = '0%';
-            }
-
-            if (lastText) {
-                this.textLayer.textContent = lastText;
             }
 
             if (readingEnabled !== undefined) {
@@ -279,17 +326,6 @@ export class V2Reader {
             // 重新初始化 TTS
             this.initTTS();
             this.updateButtonStates();
-
-            // 只在当前版本是V2时才自动开始朗读
-            if (document.body.dataset.version === 'v2' && this.readingEnabled && this.textLayer.textContent.trim()) {
-                setTimeout(async () => {
-                    // 确保没有其他朗读在进行
-                    if (!this.isReading && !this.isPaused) {
-                        await window.speechAPI.stop();  // 确保清理所有资源
-                        this.startReadingFromPosition(0);
-                    }
-                }, 1000);  // 增加延迟时间到1秒
-            }
         }
     }
 
@@ -327,7 +363,7 @@ export class V2Reader {
                 groups[category].voices.push(voice);
             });
 
-            // 生成下拉列表内容
+            // 生成语音选择列表
             Object.entries(groups).forEach(([category, group]) => {
                 if (group.voices.length > 0) {
                     const categoryDiv = document.createElement('div');
@@ -507,7 +543,6 @@ export class V2Reader {
                     }
                 }
             }
-            console.log('启动时清理临时文件完成');
         } catch (error) {
             console.error('读取临时目录失败:', error);
         }
@@ -582,10 +617,17 @@ export class V2Reader {
                 // 读取字幕文件
                 const subtitlesPath = fullPath + '.json';
                 try {
-                    const subtitlesContent = await window.speechAPI.readFile(subtitlesPath);
-                    this.currentSubtitles = JSON.parse(subtitlesContent);
+                    // 先检查字幕文件是否存在
+                    const subtitlesExists = await window.speechAPI.fileExists(subtitlesPath);
+                    if (subtitlesExists) {
+                        const subtitlesContent = await window.speechAPI.readFile(subtitlesPath);
+                        this.currentSubtitles = JSON.parse(subtitlesContent);
+                    } else {
+                        console.log('字幕文件不存在，继续播放音频');
+                        this.currentSubtitles = [];
+                    }
                 } catch (error) {
-                    console.error('读取字幕文件失败:', error);
+                    console.log('处理字幕文件时出错，继续播放音频:', error);
                     this.currentSubtitles = [];
                 }
 
@@ -598,6 +640,11 @@ export class V2Reader {
 
                 // 从头开始播放
                 this.readingStatus.textContent = '正在朗读...';
+                // 检查是否还允许朗读
+                if (!this.readingEnabled) {
+                    console.log('朗读已关闭，取消播放');
+                    return;
+                }
                 success = await window.speechAPI.playAudioFile(
                     outputFile,
                     (currentTime) => this.handleTimeUpdate(currentTime, position),
@@ -608,65 +655,107 @@ export class V2Reader {
                     throw new Error('播放失败');
                 }
             } else {
-                console.log('需要重新生成音频文件');
                 // 确保使用最新的配置
                 this.updateTTSConfig();
 
-                // 添加重试逻辑
-                let retryCount = 3;
-                let lastError = null;
+                try {
+                    this.readingStatus.textContent = '正在生成语音...';
 
-                while (retryCount > 0 && !success) {
-                    try {
-                        this.readingStatus.textContent = `正在生成语音...${retryCount < 3 ? `(重试第${3 - retryCount}次)` : ''}`;
-                        await this.tts.ttsPromise(textToRead, fullPath);
-                        success = true;
-                        console.log('音频文件生成成功');
+                    // 创建进度监控
+                    let isGenerating = true;
+                    let lastSize = 0;
+                    let startTime = Date.now();
 
-                        // 添加到缓存和临时文件列表
-                        this.audioCache.set(textHash, true);
-                        this.tempFiles.add(outputFile);
-                        console.log('已添加到缓存:', {
-                            hash: textHash,
-                            file: outputFile,
-                            cacheSize: this.audioCache.size,
-                            tempFiles: Array.from(this.tempFiles)
-                        });
+                    const progressChecker = setInterval(async () => {
+                        if (!isGenerating) return;
 
-                        // 读取字幕文件
-                        const subtitlesPath = fullPath + '.json';
                         try {
+                            const exists = await window.speechAPI.fileExists(fullPath);
+                            if (exists) {
+                                const fileSize = await window.speechAPI.getFileSize(fullPath);
+                                if (fileSize > 0 && fileSize !== lastSize) {
+                                    const elapsedSeconds = (Date.now() - startTime) / 1000;
+                                    const sizeMB = (fileSize / 1024 / 1024).toFixed(2);
+                                    const speed = (fileSize / 1024 / elapsedSeconds).toFixed(1);
+                                    this.readingStatus.textContent = `已生成: ${sizeMB}MB (${speed} KB/s)`;
+                                    lastSize = fileSize;
+                                }
+                            }
+                        } catch (error) {
+                            // 忽略文件不存在的错误
+                            if (error.code !== 'ENOENT') {
+                                console.log('检查文件大小失败:', error);
+                            }
+                        }
+                    }, 100);
+
+                    // 开始生成语音
+                    const generatePromise = this.tts.ttsPromise(textToRead, fullPath);
+
+                    // 设置超时处理
+                    const timeoutPromise = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            reject(new Error('生成超时'));
+                        }, this.timeout);
+                    });
+
+                    // 等待生成完成或超时
+                    await Promise.race([generatePromise, timeoutPromise]);
+
+                    // 停止进度监控
+                    isGenerating = false;
+                    clearInterval(progressChecker);
+
+                    success = true;
+                    console.log('音频文件生成成功');
+
+                    // 添加到缓存和临时文件列表
+                    this.audioCache.set(textHash, true);
+                    this.tempFiles.add(outputFile);
+                    console.log('已添加到缓存:', {
+                        hash: textHash,
+                        file: outputFile,
+                        cacheSize: this.audioCache.size,
+                        tempFiles: Array.from(this.tempFiles)
+                    });
+
+                    // 读取字幕文件
+                    const subtitlesPath = fullPath + '.json';
+                    try {
+                        // 先检查字幕文件是否存在
+                        const subtitlesExists = await window.speechAPI.fileExists(subtitlesPath);
+                        if (subtitlesExists) {
                             const subtitlesContent = await window.speechAPI.readFile(subtitlesPath);
                             this.currentSubtitles = JSON.parse(subtitlesContent);
-                        } catch (error) {
-                            console.error('读取字幕文件失败:', error);
+                        } else {
+                            console.log('字幕文件不存在，继续播放音频');
                             this.currentSubtitles = [];
                         }
-
-                        // 开始播放新生成的文件
-                        this.readingStatus.textContent = '正在朗读...';
-                        success = await window.speechAPI.playAudioFile(
-                            outputFile,
-                            (currentTime) => this.handleTimeUpdate(currentTime, position),
-                            () => this.handlePlaybackEnd(outputFile, position, textToRead)
-                        );
-
-                        if (!success) {
-                            throw new Error('播放失败');
-                        }
                     } catch (error) {
-                        lastError = error;
-                        console.error(`生成语音失败 (剩余重试次数: ${retryCount - 1}):`, error);
-                        retryCount--;
-                        if (retryCount > 0) {
-                            await new Promise(resolve => setTimeout(resolve, 2000));
-                            this.initTTS();
-                        }
+                        console.log('处理字幕文件时出错，继续播放音频:', error);
+                        this.currentSubtitles = [];
                     }
-                }
 
-                if (!success) {
-                    throw lastError || new Error('生成语音失败');
+                    // 开始播放新生成的文件
+                    this.readingStatus.textContent = '正在朗读...';
+                    // 检查是否还允许朗读
+                    if (!this.readingEnabled) {
+                        console.log('朗读已关闭，取消播放');
+                        return;
+                    }
+                    success = await window.speechAPI.playAudioFile(
+                        outputFile,
+                        (currentTime) => this.handleTimeUpdate(currentTime, position),
+                        () => this.handlePlaybackEnd(outputFile, position, textToRead)
+                    );
+
+                    if (!success) {
+                        throw new Error('播放失败');
+                    }
+                } catch (error) {
+                    console.error('生成语音失败:', error);
+                    this.readingStatus.textContent = '生成失败: ' + error.message;
+                    this.onReadingEnd();
                 }
             }
         } catch (error) {
@@ -825,20 +914,7 @@ export class V2Reader {
             pitch: '0%',
             rate: `${rawSpeed}%`,
             volume: `${rawVolume}%`,
-            timeout: 30000,  // 超时30秒
-            // 添加连接选项
-            connectionOptions: {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
-                },
-                // 添加重试选项
-                maxRetries: 3,
-                retryDelay: 2000,
-                // 添加超时选项
-                handshakeTimeout: 10000,
-                // 添加保活选项
-                keepAlive: true
-            }
+            timeout: this.timeout,
         });
     }
 
@@ -854,20 +930,7 @@ export class V2Reader {
                 pitch: '0%',
                 rate: `${rawSpeed}%`,
                 volume: `${rawVolume}%`,
-                timeout: 30000,  // 超时30秒
-                // 添加连接选项
-                connectionOptions: {
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
-                    },
-                    // 添加重试选项
-                    maxRetries: 3,
-                    retryDelay: 2000,
-                    // 添加超时选项
-                    handshakeTimeout: 10000,
-                    // 添加保活选项
-                    keepAlive: true
-                }
+                timeout: this.timeout,
             };
 
             // 更新配置
@@ -909,13 +972,15 @@ export class V2Reader {
                 replacement = '与';
         }
 
-        // 只替换 & 符号
-        let processedText = text.replace(/&/g, replacement);
-
-        // 通用处理
-        return processedText
-            .replace(/[<>]/g, ' ')
+        // 处理换行和空格
+        let processedText = text
+            // .replace(/\n\s*\n\s*\n/g, '\n') // 将多个连续空行替换为单个换行
+            .replace(/^\s+|\s+$/g, '') // 移除开头和结尾的空白
+            .replace(/&/g, replacement)
+            .replace(/[<>]/g, ' ');
         // .replace(/(%[0-9A-Fa-f]{2})/g, ' ')
+
+        return processedText;
     }
 
     // 修改从指定时间开始播放的方法

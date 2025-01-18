@@ -9,13 +9,12 @@
 </head>
 
 <body data-version="v1">
-    <!-- 添加版本导航 -->
     <div class="version-nav">
         <button id="v1-btn" class="active">V1</button>
+        <div class="separator">|</div>
         <button id="v2-btn">V2</button>
     </div>
 
-    <!-- V1版本容器 -->
     <div class="container v1-container">
         <div class="top-controls">
             <div class="voice-control">
@@ -37,6 +36,15 @@
         <div class="content-area">
             <div class="text-wrapper">
                 <div id="text-layer" class="text-layer" contenteditable="true" spellcheck="false"></div>
+                <button class="fullscreen-btn" title="全屏">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+                        <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
+                        <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                    </svg>
+                </button>
             </div>
         </div>
         <div class="button-group">
@@ -46,7 +54,6 @@
         </div>
     </div>
 
-    <!-- V2版本容器(完全复制V1的结构) -->
     <div class="container v2-container">
         <div class="top-controls">
             <div class="voice-control">
@@ -62,7 +69,7 @@
             </div>
             <div class="speed-control">
                 <label>语速：</label>
-                <input type="range" id="speed-control-v2" min="-100" max="200" value="0" step="10">
+                <input type="range" id="speed-control-v2" min="-100" max="200" value="0" step="1">
                 <span id="speed-value-v2">0%</span>
             </div>
             <div class="status">
@@ -72,14 +79,33 @@
         </div>
         <div class="content-area">
             <div class="text-wrapper">
-
-                <div id="text-layer-v2" class="text-layer" contenteditable="true" spellcheck="false" placeholder="请输入要朗读的文本..."></div>
+                <div id="text-layer-v2" class="text-layer" contenteditable="true" spellcheck="false"
+                    placeholder="请输入要朗读的文本..."></div>
+                <button class="fullscreen-btn" title="全屏">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+                        <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
+                        <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                    </svg>
+                </button>
             </div>
         </div>
         <div class="button-group">
             <button id="play-btn-v2">开始朗读</button>
             <button id="pause-btn-v2">暂停</button>
             <button id="stop-btn-v2">停止</button>
+        </div>
+        <div class="save-mp3-btn">
+            <button id="save-mp3-btn-v2" title="保存MP3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                </svg>
+            </button>
         </div>
     </div>
     <script src="src/index.js" type="module"></script>

@@ -12,6 +12,7 @@ let edgeVoices = null;
 let currentEdgeStream = null;
 let audioContext = null;
 let audioSource = null;
+let isPlaying = false;
 
 // 创建音频上下文
 function createAudioContext() {
@@ -316,6 +317,9 @@ window.speechAPI = {
                     }
                 }
 
+                // 重置播放状态
+                isPlaying = false;
+
                 // 确保所有资源都被清理
                 setTimeout(() => {
                     try {
@@ -420,7 +424,6 @@ window.speechAPI = {
         return new Promise((resolve) => {
             try {
                 const exists = fs.existsSync(filePath);
-                console.log('检查文件是否存在:', { filePath, exists });
                 resolve(exists);
             } catch (error) {
                 console.error('检查文件是否存在失败:', error);
@@ -469,6 +472,21 @@ window.speechAPI = {
     // 播放音频文件
     playAudioFile: async (filename, onTimeUpdate, onEnd, startTime = 0) => {
         try {
+            // 如果已经在播放，先停止当前播放
+            if (isPlaying) {
+                console.log('已有音频在播放，停止当前播放');
+                if (audioSource) {
+                    audioSource.stop();
+                    audioSource.disconnect();
+                    audioSource = null;
+                }
+                if (audioContext) {
+                    await audioContext.close();
+                    audioContext = null;
+                }
+            }
+            isPlaying = true;
+
             const filePath = path.join(os.tmpdir(), filename);
             console.log('开始播放音频文件:', {
                 filename,
@@ -478,6 +496,13 @@ window.speechAPI = {
 
             const audioData = await fs.promises.readFile(filePath);
             console.log('音频文件读取成功，大小:', audioData.length, '字节');
+
+            const fileSize = await window.speechAPI.getFileSize(filePath);
+            if (fileSize === 0) {
+                alert('请检查文字, 可能需要更换语音!');
+                isPlaying = false;
+                return false;
+            }
 
             const context = createAudioContext();
             if (context.state === 'suspended') {
@@ -507,14 +532,17 @@ window.speechAPI = {
                 source.onended = () => {
                     clearInterval(interval);
                     console.log('音频播放完成');
+                    isPlaying = false;
                     if (onEnd) onEnd();
                 };
             } else if (onEnd) {
-                source.onended = onEnd;
+                source.onended = () => {
+                    isPlaying = false;
+                    onEnd();
+                };
             }
 
             source.startTime = context.currentTime;
-            // 使用 startTime 参数来控制开始位置
             source.start(0, startTime);
             console.log('音频开始播放，起始位置:', startTime, '秒');
             audioSource = source;
@@ -522,6 +550,7 @@ window.speechAPI = {
             return true;
         } catch (error) {
             console.error('播放音频文件失败:', error);
+            isPlaying = false;
             if (onEnd) onEnd();
             return false;
         }
@@ -550,5 +579,27 @@ window.speechAPI = {
                 }
             });
         });
+    },
+
+    // 添加文件操作相关方法
+    copyFile: (sourcePath, targetPath) => {
+        return new Promise((resolve, reject) => {
+            try {
+                fs.copyFileSync(sourcePath, targetPath);
+                resolve(true);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
+
+    getFileSize: (filePath) => {
+        try {
+            const stats = fs.statSync(filePath);
+            return stats.size;
+        } catch (error) {
+            console.error('获取文件大小失败:', error);
+            return 0;
+        }
     }
 }; 
